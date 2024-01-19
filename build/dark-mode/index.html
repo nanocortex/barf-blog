@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="data:,">
+	<title>Supporting Basic Dark Mode</title>
+	<link href="https://barf.bt.ht/atom.xml" type="application/atom+xml" rel="alternate" title="Atom feed for blog posts" />
+	<style>*{box-sizing:border-box;}body{font-family:sans-serif;margin:0 auto;max-width:650px;padding:1rem;}img{max-width:100%;}pre{overflow:auto;}</style>
+</head>
+
+<nav>
+	<a href="#menu">Menu &darr;</a>
+</nav>
+
+<main>
+<h1>Supporting Basic Dark Mode</h1>
+<p>2023-03-07</p>
+<p>The default <code>barf</code> site generator now supports basic dark mode functionality. This has been achieved by including the standard <code>color-scheme</code> meta tag in the core <code>header.html</code> file:</p>
+<pre><code>&lt;meta name=&quot;color-scheme&quot; content=&quot;dark light&quot;&gt;
+</code></pre>
+<p>This change also ships with some minor updates to the default <code>blockquote</code> design. You can see an example below:</p>
+<blockquote><p>This is a really <em>cool</em> blockquote</p>
+</blockquote>
+<h2>Minor Caveat</h2>
+<p>Unfortunately, Safari still has minor <code>ahref</code> / link color issue when defaulting to browser dark mode. If this is a problem for your own build of <code>barf</code>, take a look at a <a href="https://bt.ht/safari-default-dark-mode/">solution I wrote about here</a>.</p>
+<p>Personally, I can't be bothered to add that extra code to this project. The Safari team needs to get their shit together and fix such a simple bug. Plus, you shouldn't be using Safari anyway - it's proprietary garbage.</p>
+<footer role="contentinfo">
+    <hr>
+    <h3 id="menu">Menu Navigation</h3>
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/websites">Websites</a></li>
+        <li><a href="https://git.sr.ht/~bt/barf">Source Code</a></li>
+    </ul>
+    <small>
+        Built with <a href="https://git.sr.ht/~bt/barf">barf</a>. <br>
+        The <a href="https://git.sr.ht/~bt/barf">code for this site</a> is <a href="https://git.sr.ht/~bt/barf/tree/master/item/LICENSE">MIT</a>.
+    </small>
+</footer>
