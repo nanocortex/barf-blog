@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+	<link rel="icon" href="data:,">
+	<title>Secure server</title>
+	<link href="https://blog.exocortex.in/atom.xml" type="application/atom+xml" rel="alternate" title="Atom feed for blog posts" />
+	<style>*{box-sizing:border-box;}body{font-family:sans-serif;margin:0 auto;max-width:650px;padding:1rem;}img{max-width:100%;}pre{overflow:auto;}</style>
+</head>
+
+<nav>
+	<a href="#menu">Menu &darr;</a>
+</nav>
+
+<main>
+<h1>Secure server</h1>
+<p>2023-01-18</p>
+<h2>Basics</h2>
+<pre><code class="language-bash"># Update packages
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get autoremove
+sudo apt-get autoclean
+# Auto update packages
+sudo apt-get install unattended-upgrades
+sudo dpkg-reconfigure -plow unattended-upgrades
+# Create user, add it to sudoers
+useradd -G sudo -m &lt;USER&gt; -s /bin/bash
+# Change user password
+passwd &lt;USER&gt;
+# Copy .ssh from root to user
+cp -R /root/.ssh /home/&lt;USER&gt;/
+# Setting permissions
+chown &lt;USER&gt;:&lt;USER&gt; -R /home/&lt;USER&gt;/.ssh
+chmod 600 /home/&lt;USER&gt;/.ssh
+</code></pre>
+<h2>Secure ssh configuration</h2>
+<pre><code class="language-bash"># Change port to prevent auto scanning from bots
+Port 88 
+# Time in which user must authenticate after starting connection
+LoginGraceTime 20
+# Disable root login
+PermitRootLogin no
+# Self-explainatory
+MaxAuthTries 3
+# Self-explainatory
+PasswordAuthentication no
+# Self-explainatory
+PermitEmptyPasswords no
+# Disable not needed auth methods
+ChallengeResponseAuthentication no
+KerberosAuthentication no
+GSSAPIAuthentication no
+# Disable X11 tunelling. Hardly ever used, better to disable it
+X11Forwarding no
+# Disable other unnecessary options
+AllowAgentForwarding no
+AllowTcpForwarding no
+PermitTunnel no]
+# Disable banner on start
+Banner none
+# Timeout on session 5 minutes, 2 retries
+ClientAliveInterval 300
+ClientAliveCountMax 2
+</code></pre>
+<h2>Fail2Ban</h2>
+<pre><code class="language-bash"># Install
+apt-get install fail2ban
+# Copy config
+cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+</code></pre>
+<p>Configuring <code>/etc/fail2ban/jail.local</code></p>
+<pre><code class="language-bash">. . .
+[sshd]
+
+1enabled  = true
+port    = ssh
+logpath = %(sshd_log)s
+. . .
+</code></pre>
+<p>Restart:</p>
+<pre><code class="language-bash">service fail2ban restart
+</code></pre>
+<h2>2FA</h2>
+<pre><code class="language-bash">sudo apt-get install libpam-google-authenticator
+</code></pre>
+<p>Add at end of file <code>/etc/pam.d/sshd</code></p>
+<pre><code class="language-bash">. . .
+auth required pam_google_authenticator.so
+. . .
+</code></pre>
+<pre><code>sudo systemctl restart sshd.service
+</code></pre>
+<p>Edit ssh config sshd</p>
+<pre><code class="language-bash">UsePAM yes
+ChallengeResponseAuthentication yes
+AuthenticationMethods publickey,password publickey,keyboard-interactive
+</code></pre>
+<p>Comment in file <code>/etc/pam.d/sshd</code></p>
+<pre><code class="language-bash">. . .
+#@include common-auth
+. . .
+</code></pre>
+<pre><code>sudo systemctl restart sshd.service
+</code></pre>
+<h2>References</h2>
+<ol>
+<li><a href="https://www.digitalocean.com/community/tutorials/how-to-harden-openssh-on-ubuntu-18-04">How To Harden OpenSSH on Ubuntu 18.04</a></li>
+<li><a href="https://rafrasenberg.com/posts/docker-container-management-with-traefik-v2-and-portainer/">Docker container management with Traefik v2 and Portainer</a></li>
+<li><a href="https://medium.com/@jasonrigden/hardening-ssh-1bcb99cd4cef">Hardening SSH</a></li>
+<li><a href="https://www.digitalocean.com/community/tutorials/how-to-set-up-multi-factor-authentication-for-ssh-on-ubuntu-16-04">How To Set Up Multi-Factor Authentication for SSH on Ubuntu 16.04</a></li>
+</ol>
+<footer role="contentinfo">
+    <hr>
+    <h3 id="menu">Menu Navigation</h3>
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+    </ul>
+    <small>
+        Built with <a href="https://git.btxx.org/barf">barf</a>. <br>
+        The <a href="https://git.btxx.org/barf">code for this site</a> is MIT.
+    </small>
+</footer>
